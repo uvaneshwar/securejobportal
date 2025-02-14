@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Employer Registration - Online Job Portal</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link href="img/favicon.ico" rel="icon">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="bg-white p-0">
+        <!-- Navbar and other HTML elements here -->
+
+        <!-- Employer Registration Starts -->
+        <div class="container-xxl bg-primary mb-5 wow fadeIn" data-wow-delay="0.1s" style="padding: 70px;">
+            <h1 class="text-center text-white wow fadeInUp" data-wow-delay="0.1s">Employer Registration</h1>
+            <div class="container">
+                <h4 class="text-white">Email</h4>
+                <input type="email" id="email" class="form-control border-0" required /><br>
+                <h4 class="text-white">Password</h4>
+                <input type="password" id="password" class="form-control border-0" required minlength="8" /><br>
+                <h4 class="text-white">Confirm Password</h4>
+                <input type="password" id="confirmPassword" class="form-control border-0" required minlength="8" /><br>
+                
+                <!-- Employer Type (Individual or Company) -->
+                <h4 class="text-white">I am a:</h4>
+                <select id="employerType" class="form-control border-0">
+                    <option value="individual">Individual</option>
+                    <option value="company">Company</option>
+                </select><br>
+
+                <!-- Company GST or Individual PAN & Mobile Section -->
+                <div id="companySection" style="display: none;">
+                    <h4 class="text-white">Company GST Number</h4>
+                    <input type="text" id="gstNumber" class="form-control border-0" /><br>
+                    <h4 class="text-white">Enter OTP for GST Number</h4>
+                    <input type="text" id="gstOtp" class="form-control border-0" readonly /><br>
+                    <button type="button" id="generateGstOtp" class="btn btn-secondary">Generate OTP for GST</button><br>
+                </div>
+                <div id="individualSection" style="display: none;">
+                    <h4 class="text-white">PAN Number</h4>
+                    <input type="text" id="panNumber" class="form-control border-0" /><br>
+                    <h4 class="text-white">Mobile Number</h4>
+                    <input type="text" id="mobileNumber" class="form-control border-0" /><br>
+                    <h4 class="text-white">Enter OTP for Mobile</h4>
+                    <input type="text" id="mobileOtp" class="form-control border-0" readonly /><br>
+                    <button type="button" id="generateMobileOtp" class="btn btn-secondary">Generate OTP for Mobile</button><br>
+                </div>
+            </div>
+            <div class="text-center">
+                <button type="button" id="registerBtn" class="btn btn-secondary py-3 px-lg-5 animated fadeIn">Register as Employer</button>
+            </div>
+            <div class="text-center">
+                <span class="text-white">Already have an account?</span>
+                <a href="login.html" class="text-white">Login</a>
+            </div>
+        </div>
+
+        <!-- JavaScript Libraries -->
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+
+        <script>
+            // Show or hide the Company GST/Individual PAN & Mobile based on employer type selection
+            document.getElementById('employerType').addEventListener('change', function() {
+                const employerType = this.value;
+                const companySection = document.getElementById('companySection');
+                const individualSection = document.getElementById('individualSection');
+                
+                if (employerType === 'company') {
+                    companySection.style.display = 'block';
+                    individualSection.style.display = 'none';
+                } else {
+                    companySection.style.display = 'none';
+                    individualSection.style.display = 'block';
+                }
+            });
+
+            // Generate a random 3-digit OTP for Mobile
+            document.getElementById('generateMobileOtp').addEventListener('click', function() {
+                const mobileOtp = Math.floor(100 + Math.random() * 900); // Generate OTP between 100 and 999
+                document.getElementById('mobileOtp').value = mobileOtp;
+            });
+
+            // Generate a random 3-digit OTP for GST Number
+            document.getElementById('generateGstOtp').addEventListener('click', function() {
+                const gstOtp = Math.floor(100 + Math.random() * 900); // Generate OTP between 100 and 999
+                document.getElementById('gstOtp').value = gstOtp;
+            });
+
+            // Handle form submission for employer registration
+            document.getElementById('registerBtn').addEventListener('click', function() {
+                var email = document.getElementById('email').value;
+                var password = document.getElementById('password').value;
+                var confirmPassword = document.getElementById('confirmPassword').value;
+                const employerType = document.getElementById('employerType').value;
+                let gstNumber, panNumber, mobileNumber, mobileOtp, gstOtp;
+                
+                if (employerType === 'company') {
+                    gstNumber = document.getElementById('gstNumber').value;
+                    gstOtp = document.getElementById('gstOtp').value;
+                } else {
+                    panNumber = document.getElementById('panNumber').value;
+                    mobileNumber = document.getElementById('mobileNumber').value;
+                    mobileOtp = document.getElementById('mobileOtp').value;
+                }
+
+                // Regex to validate email ending with .com, .ac, or .in
+                var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.(com|ac|in)$/;
+
+                if (!emailPattern.test(email)) {
+                    alert('Invalid email address. Please enter a valid email address');
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    alert('Passwords do not match.');
+                    return;
+                }
+
+                // For Company, ensure GST is entered, and for Individual, ensure PAN and Mobile are entered
+                if (employerType === 'company' && (!gstNumber || !gstOtp)) {
+                    alert('Please enter the Company GST number and OTP.');
+                    return;
+                }
+                if (employerType === 'individual' && (!panNumber || !mobileNumber || !mobileOtp)) {
+                    alert('Please enter your PAN, Mobile number, and OTP.');
+                    return;
+                }
+
+                // Send registration data to the server
+                fetch('http://localhost:3000/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        email: email, 
+                        password: password, 
+                        userType: 'employer', 
+                        employerType: employerType,
+                        gstNumber: gstNumber,
+                        panNumber: panNumber,
+                        mobileNumber: mobileNumber,
+                        mobileOtp: mobileOtp,
+                        gstOtp: gstOtp
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('Error: ' + data.error);
+                    } else {
+                        alert('Registration successful. Please login.');
+                        window.location.href = 'login.html';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error during registration:', error);
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>

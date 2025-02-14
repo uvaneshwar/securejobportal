@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Job Posts</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Favicon -->
+    <link href="img/favicon.ico" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600&family=Inter:wght@700;800&display=swap" rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container my-5">
+        <h2>All Job Posts</h2>
+        <div id="jobPosts" class="row">
+            <!-- Job posts will be loaded here -->
+        </div>
+    </div>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+
+    <script>
+        // Fetch and display all job posts
+        fetch('http://localhost:3000/jobs')
+            .then(response => response.json())
+            .then(data => {
+                const jobPostsContainer = document.getElementById('jobPosts');
+                if (data.length > 0) {
+                    data.forEach(job => {
+                        const jobElement = document.createElement('div');
+                        jobElement.classList.add('col-md-4');
+                        jobElement.classList.add('mb-4');
+                        jobElement.innerHTML = `
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">${job.role}</h5>
+                                    <p class="card-text"><strong>Company:</strong> ${job.company}</p>
+                                    <p class="card-text"><strong>Experience Needed:</strong> ${job.experienceneeded}</p>
+                                    <p class="card-text"><strong>Location:</strong> ${job.location}</p>
+                                </div>
+                            </div>
+                        `;
+                        jobPostsContainer.appendChild(jobElement);
+                    });
+                } else {
+                    jobPostsContainer.innerHTML = '<p>No job posts available.</p>';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching job posts:', error);
+            });
+    </script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Online Job Portal - Register</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link href="img/favicon.ico" rel="icon">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <div class="bg-white p-0">
+        <!-- Navbar and other HTML elements here -->
+
+        <!-- Register Starts -->
+        <div class="container-xxl bg-primary mb-5 wow fadeIn" data-wow-delay="0.1s" style="padding: 70px;">
+            <h1 class="text-center text-white wow fadeInUp" data-wow-delay="0.1s">Register</h1>
+            <div class="container">
+                <h4 class="text-white">Email</h4>
+                <input type="email" id="email" class="form-control border-0" required /><br>
+                <h4 class="text-white">Password</h4>
+                <input type="password" id="password" class="form-control border-0" required minlength="8" /><br>
+                <h4 class="text-white">Confirm Password</h4>
+                <input type="password" id="confirmPassword" class="form-control border-0" required minlength="8" /><br>
+                
+                <h4 class="text-white">I am a:</h4>
+                <select id="userType" class="form-control border-0">
+                    <option value="jobSeeker">Job Seeker</option>
+                    <option value="employer">Employer</option>
+                </select><br>
+            </div>
+            <div class="text-center">
+                <button type="button" id="registerBtn" class="btn btn-secondary py-3 px-lg-5 animated fadeIn">Register</button>
+            </div>
+            <div class="text-center">
+                <span class="text-white">Already have an account?</span>
+                <a href="login.html" class="text-white">Login</a>
+            </div>
+        </div>
+
+        <!-- JavaScript Libraries -->
+        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+        <script src="js/bootstrap.min.js"></script>
+
+        <script>
+            // Handle dropdown change event to redirect to the Employer Registration page
+            document.getElementById('userType').addEventListener('change', function() {
+                const userType = this.value;
+                
+                if (userType === 'employer') {
+                    // Redirect to the employer registration page
+                    window.location.href = 'employer_reg.html';
+                }
+            });
+
+            // Handle form submission for registration
+            document.getElementById('registerBtn').addEventListener('click', function() {
+                var email = document.getElementById('email').value;
+                var password = document.getElementById('password').value;
+                var confirmPassword = document.getElementById('confirmPassword').value;
+                var userType = document.getElementById('userType').value;
+
+                // Regex to validate email ending with .com, .ac, or .in
+                var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.(com|ac|in)$/;
+
+                if (!emailPattern.test(email)) {
+                    alert('Invalid email address. Please enter a valid email address');
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    alert('Passwords do not match.');
+                    return;
+                }
+
+                // Send registration data to the server
+                fetch('http://localhost:3000/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email: email, password: password, userType: userType }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert('Error: ' + data.error);
+                    } else {
+                        alert('Registration successful. Please login.');
+                        window.location.href = 'login.html'; // Redirect to login page
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('Error during registration. Please try again.');
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>
