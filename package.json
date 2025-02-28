@@ -28,3 +28,10 @@
   "author": "",
   "license": "ISC"
 }
+{
+    "scripts": {
+        "start": "node server.js",
+        "test": "echo \"No tests specified\" && exit 0"
+    }
+}
+
