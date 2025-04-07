@@ -17,7 +17,8 @@ const pool = new Pool({
         rejectUnauthorized: false
     }
 });
-//postgresql://postgres:[Darshan@0904.]@db.ttiycujbhughvzyqfrxf.supabase.co:5432/postgres
+
+
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
