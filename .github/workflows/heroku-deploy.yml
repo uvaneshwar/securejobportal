@@ -16,7 +16,7 @@ jobs:
 
       - name: Deploy to Heroku
         env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_API_KEY: ${{ HRKU-01c5f9f9-91ef-48ec-819e-8aaa15c96a8f }}
         run: |
           heroku container:login
           heroku container:push web --app your-heroku-app-name
