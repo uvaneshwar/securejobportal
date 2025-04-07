@@ -58,6 +58,12 @@ app.post('/register', async (req, res) => {
   }
 });
 
+app.use(express.static('public'));
+
+// OR manually map the route if not using express.static
+app.get('/securejobportal/viewjobs.html', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'viewjobs.html'));
+});
 
 // Login endpoint
 app.post('/login', async (req, res) => {
