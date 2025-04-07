@@ -1,4 +1,5 @@
-// node.js
+require('dotenv').config(); // Load environment variables
+
 const express = require('express');
 const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
@@ -8,13 +9,12 @@ const cors = require('cors');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// PostgreSQL connection
+// PostgreSQL connection using Supabase
 const pool = new Pool({
-    user: 'your_db_user',
-    host: 'localhost',
-    database: 'your_db_name',
-    password: 'admin',
-    port: 5432,
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+        rejectUnauthorized: false, // Required by Supabase
+    }
 });
 
 app.use(cors());
@@ -24,27 +24,26 @@ app.use(bodyParser.json());
 app.post('/register', async (req, res) => {
     const { email, password } = req.body;
 
-    // Hash the password
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Insert into database
     try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+
         const result = await pool.query(
-            'INSERT INTO usersLogins (email, password) VALUES ($1, $2) RETURNING *',
+            'INSERT INTO usersLogin (email, password) VALUES ($1, $2) RETURNING *',
             [email, hashedPassword]
         );
+
         res.status(201).json({ message: 'User registered successfully', user: result.rows[0] });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error('Registration error:', err);
+        res.status(500).json({ error: 'Registration failed' });
     }
 });
 
-// Assuming you have the necessary imports at the top of your server file
+// Login endpoint
 app.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        // Fetch user from the database
         const result = await pool.query(
             'SELECT * FROM usersLogin WHERE email = $1',
             [email]
@@ -55,21 +54,18 @@ app.post('/login', async (req, res) => {
         }
 
         const user = result.rows[0];
-
-        // Check the password
         const match = await bcrypt.compare(password, user.password);
+
         if (!match) {
             return res.status(401).json({ error: 'Invalid email or password' });
         }
 
-        // If successful, return user data or a success message
         res.json({ message: 'Login successful', userId: user.id });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Login error:', err);
+        res.status(500).json({ error: 'Login failed' });
     }
 });
-
 
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
