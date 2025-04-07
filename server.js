@@ -227,3 +227,8 @@ app.get('/api/employees', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+app.get('/health', (req, res) => {
+    res.send('OK');
+  });
+  
