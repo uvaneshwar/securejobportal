@@ -209,15 +209,18 @@ app.post('/submit', async (req, res) => {
     }
 });
 
+
 app.get('/api/employees', async (req, res) => {
+    console.log("🔍 API hit: /api/employees");
     try {
         const result = await pool.query('SELECT * FROM employees');
         res.json(result.rows);
     } catch (err) {
-        console.error('Error fetching data:', err);
+        console.error('❌ Error fetching data:', err.message);
         res.status(500).send('Error fetching data');
     }
 });
+
 
 // Start the server
 app.listen(PORT, () => {
