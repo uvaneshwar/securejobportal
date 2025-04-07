@@ -34,6 +34,7 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 // Serve index.html from public directory
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
+
 });
 
 // Registration endpoint
@@ -174,4 +175,5 @@ app.get('/health', (req, res) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`✅ Server is running on port ${PORT}`);
+
 });
