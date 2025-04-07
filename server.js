@@ -58,14 +58,11 @@ app.post('/register', async (req, res) => {
   }
 });
 
-// Login endpoint
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
     const result = await pool.query('SELECT * FROM usersLogin WHERE email = $1', [email]);
-    const user = result.rows[0];
-
-    if (user) {
+    const user = result.rows[0];    if (user) {
       const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
         const redirectPage = user.user_type === 'employer' ? 'Employer.html' : 'Job%20Seeker.html';
