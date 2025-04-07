@@ -4,7 +4,7 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const { Pool } = require('pg');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const multer = require('multer');
@@ -27,20 +27,20 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, '')));
 app.use('/lib', express.static(path.join(__dirname, 'lib')));
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
 // Serve index.html from public directory
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
-
 });
 
 // Registration endpoint
 app.post('/register', async (req, res) => {
   const { email, password, userType } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
+
 
   try {
     const result = await pool.query(
@@ -175,5 +175,4 @@ app.get('/health', (req, res) => {
 // Start server
 app.listen(PORT, () => {
   console.log(`✅ Server is running on port ${PORT}`);
-
 });
