@@ -105,21 +105,6 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
-    <script>
-        async function checkLoginStatus() {
-            try {
-                const res = await fetch('/check-session');
-                const data = await res.json();
-                if (!data.loggedIn) {
-                    window.location.href = 'login.html';
-                }
-            } catch (error) {
-                console.error('Session check failed:', error);
-                window.location.href = 'login.html';
-            }
-        }
-        checkLoginStatus();
-    </script>
 </body>
 
 </html>
